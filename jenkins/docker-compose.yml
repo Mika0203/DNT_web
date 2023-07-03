@@ -1,0 +1,7 @@
+version: '3'
+services:
+  DNT:
+    image: jayutest.best:56789/dnt/dnt_web:latest
+    hostname: dnt
+    ports:
+      - 10031:3000
