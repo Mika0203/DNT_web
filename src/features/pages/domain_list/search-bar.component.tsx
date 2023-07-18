@@ -3,6 +3,8 @@ import {styled} from 'styled-components';
 import {useState} from 'react';
 import ProjectNameAutoCompleteField from '@src/features/ui/project-name-auto-complete-field';
 import {useListContext} from '@src/features/ui/listview';
+import {ExcelUtils, excelDefaultHeader} from '@src/utils';
+import {DomainAPI} from '@src/api';
 
 const Wrapper = styled.div`
   padding: 16px 16px;
@@ -24,7 +26,7 @@ export default function SearchBar() {
   const [project, setProject] = useState('');
   const [lang, setLang] = useState('');
   const [search, setSearch] = useState('');
-  const {setSearchParams} = useListContext();
+  const {setSearchParams, searchParams} = useListContext();
 
   const onClickSearch = () => {
     const params = {
@@ -48,9 +50,32 @@ export default function SearchBar() {
     });
   };
 
+  const onClickExportExcel = async () => {
+    const projectName = project;
+
+    if (!projectName) {
+      alert('프로젝트를 선택 후 시도해주세요');
+      return;
+    }
+
+    const data = await DomainAPI.getList({
+      ...searchParams,
+      project: projectName,
+      page: 0,
+      limit: 9999,
+    });
+    if (data.success) {
+      ExcelUtils.download(projectName, {
+        headers: excelDefaultHeader,
+        data: data.data,
+      });
+    } else {
+      alert('데이터 로드 실패');
+    }
+  };
+
   return (
     <Wrapper>
-      <span>검색</span>
       <ProjectNameAutoCompleteField freeSolo={true} value={project} setValue={setProject} />
       <TextField
         value={search}
@@ -64,6 +89,9 @@ export default function SearchBar() {
         </Button>
         <Button onClick={onClickInit} variant='contained'>
           초기화
+        </Button>
+        <Button onClick={onClickExportExcel} variant='contained'>
+          엑셀 추출
         </Button>
       </Buttons>
     </Wrapper>

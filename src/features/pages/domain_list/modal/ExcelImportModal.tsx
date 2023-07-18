@@ -1,6 +1,6 @@
 import {Button, DialogTitle} from '@mui/material';
 import {DomainAPI} from '@src/api';
-import {ExcelUtils} from '@src/utils';
+import {ExcelUtils, excelDefaultHeader} from '@src/utils';
 import {styled} from 'styled-components';
 
 const StyledButtons = styled.div`
@@ -12,39 +12,16 @@ const StyledButtons = styled.div`
 `;
 
 export default function ExcelImportModal() {
-  const onClickDownloadTemplate = () => {
-    ExcelUtils.download('도메인 입력 템플릿', {
-      headers: [
-        {
-          keyName: 'project',
-          label: '프로젝트',
-        },
-        {
-          keyName: 'domain',
-          label: '도메인',
-        },
-        {
-          keyName: 'code',
-          label: '코드',
-        },
-        {
-          keyName: 'lang',
-          label: '언어',
-        },
-        {
-          keyName: 'data-type',
-          label: '데이터타입',
-        },
-        {
-          keyName: 'abb',
-          label: '약어',
-        },
-        {
-          keyName: 'des',
-          label: '설명',
-        },
-      ],
-      data: [],
+  const onClickDownload = ({
+    fileName = '도메인 입력 템플릿',
+    data = [],
+  }: {
+    fileName?: string;
+    data?: Object[];
+  } = {}) => {
+    ExcelUtils.download(fileName, {
+      headers: excelDefaultHeader,
+      data: data,
     });
   };
 
@@ -89,7 +66,7 @@ export default function ExcelImportModal() {
     <>
       <DialogTitle id='alert-dialog-title'>{'xlsx 파일 추가'}</DialogTitle>
       <StyledButtons>
-        <Button onClick={onClickDownloadTemplate} variant='contained'>
+        <Button onClick={() => onClickDownload()} variant='contained'>
           템플릿 다운로드
         </Button>
         <Button onClick={onClickToUpload} variant='contained'>

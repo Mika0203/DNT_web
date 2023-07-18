@@ -24,6 +24,37 @@ const model: ExcelData[] = [
   },
 ];
 
+const excelDefaultHeader = [
+  {
+    keyName: 'project',
+    label: '프로젝트',
+  },
+  {
+    keyName: 'domain',
+    label: '도메인',
+  },
+  {
+    keyName: 'code',
+    label: '코드',
+  },
+  {
+    keyName: 'lang',
+    label: '언어',
+  },
+  {
+    keyName: 'data-type',
+    label: '데이터타입',
+  },
+  {
+    keyName: 'abb',
+    label: '약어',
+  },
+  {
+    keyName: 'des',
+    label: '설명',
+  },
+];
+
 type Props = {
   /*
     해당 배열의 순서로 엑셀에 그려집니다.
@@ -50,9 +81,7 @@ class ExcelUtils {
   static async download(fileName: string, {headers, data}: Props) {
     const workbook = new exceljs.Workbook();
     const worksheet = workbook.addWorksheet();
-
     const excelData = this.dataConverter({headers, data});
-
     excelData.forEach((eData, index) => {
       worksheet.getColumn(index + 1).values = [eData.header, ...eData.data];
       worksheet.getColumn(index + 1).width = 20;
@@ -126,4 +155,4 @@ class ExcelUtils {
 }
 
 export default ExcelUtils;
-export {model};
+export {model, excelDefaultHeader};
