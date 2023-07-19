@@ -24,7 +24,7 @@ export default class UserAPI {
     return res.data;
   }
 
-  static async deleteUser(seq: number): Promise<ResponseData<UserModel>> {
+  static async deleteUser(seq: number | string): Promise<ResponseData<UserModel>> {
     const res = await axios(`${apiURL}/v1/admin/users/${seq}`, {
       method: 'DELETE',
     });

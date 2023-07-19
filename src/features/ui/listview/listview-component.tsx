@@ -1,19 +1,22 @@
 import {Table, TableBody, TableContainer} from '@mui/material';
-import ListHeader from './listview.header';
 import {ReactNode} from 'react';
-import LoadingItem from 'src/features/ui/listview/listview-loading.component';
+
+import ListHeader from './listview.header';
 import {ListHeaderType} from './listview.model';
 import {useListContext} from './listview.context';
+import LoadingItem from './listview-loading.component';
 
 export default function ListView({
   children,
   onIntersect,
   action,
   headers,
+  selectAction,
 }: {
   children: ReactNode;
   onIntersect: () => void;
   action?: ReactNode;
+  selectAction?: ReactNode;
   headers: ListHeaderType[];
 }) {
   const {loadMore} = useListContext();
@@ -22,7 +25,7 @@ export default function ListView({
     <>
       <TableContainer onSelect={(e) => {}}>
         <Table stickyHeader aria-label='sticky table'>
-          <ListHeader headers={headers} action={action} />
+          <ListHeader headers={headers} action={action} selectAction={selectAction} />
           <TableBody>{children}</TableBody>
         </Table>
         {loadMore && <LoadingItem onIntersect={onIntersect} />}

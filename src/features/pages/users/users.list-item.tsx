@@ -14,11 +14,12 @@ import {useState} from 'react';
 
 import {useAuthContext} from './users.context';
 import {UserModel} from '@src/models';
+import {useListContext} from '@src/features/ui/listview';
 
 export default function AuthKeyListItem({data}: {data: UserModel}) {
   const [deleteOpen, setDeleteOpen] = useState(false);
-
   const {deleteUser} = useAuthContext();
+  const {onCheckItem, isSelected} = useListContext();
   const onClickToDelete = async () => {
     deleteUser(data.seq);
     setDeleteOpen(false);
@@ -29,8 +30,8 @@ export default function AuthKeyListItem({data}: {data: UserModel}) {
       <TableCell padding={'checkbox'}>
         <Checkbox
           color='primary'
-          // checked={isSelected(row.id.toString())}
-          // onChange={(e) => onClickCheckbox(row.id.toString())}
+          checked={isSelected(data)}
+          onChange={(e) => onCheckItem(data)}
           inputProps={{
             'aria-label': 'select all desserts',
           }}

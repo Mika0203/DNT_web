@@ -1,5 +1,6 @@
-export interface DomainModel {
-  id: number;
+import {ItemModel} from './item.model';
+
+export interface DomainModel extends ItemModel {
   project: string;
   domain: string;
   lang: string;

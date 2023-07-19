@@ -14,9 +14,9 @@ import Addbox from '@mui/icons-material/AddBox';
 import Close from '@mui/icons-material/Close';
 import {styled} from 'styled-components';
 
-import ExcelImportModal from './ExcelImportModal';
+import ExcelImportModal from './excel-import-modal';
 import {useDomainContext} from '../domain-list.context';
-import DomainRegisterModal from './DomainRegisterModal';
+import DomainRegisterModal from './domain-register-modal';
 
 const StyledTitle = styled(DialogTitle)`
   display: flex;

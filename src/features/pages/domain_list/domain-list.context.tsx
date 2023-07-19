@@ -18,6 +18,7 @@ const initValue: {
   setData: React.Dispatch<React.SetStateAction<DomainModel[]>>;
   setEditingItem: React.Dispatch<React.SetStateAction<DomainModel>>;
   isModalOpened: boolean;
+  init: () => void;
 } = {
   data: [],
   editingItem: null,
@@ -26,6 +27,7 @@ const initValue: {
   openModal: () => {},
   closeModal: () => {},
   isModalOpened: false,
+  init: () => {},
 };
 
 const DomainListContext = createContext(initValue);
@@ -34,30 +36,36 @@ export default function DomainListProvider({children}: {children: ReactNode}) {
   const [editingItem, setEditingItem] = useState<DomainModel | null>(initValue.editingItem);
   const [data, setData] = useState<DomainModel[]>(initValue.data);
   const [isModalOpen, setModalOpen] = useState(false);
-  const {searchParams, setLoadMore} = useListContext();
+  const {searchParams, setSearchParams, setLoadMore} = useListContext();
+  const setListData = useListContext().setData;
 
-  const isModalOpened = useMemo(() => {
-    return isModalOpen || editingItem !== null;
-  }, [isModalOpen, editingItem]);
+  const isModalOpened = useMemo(
+    () => isModalOpen || editingItem !== null,
+    [isModalOpen, editingItem]
+  );
 
-  const openModal = () => {
-    setModalOpen(true);
-  };
-
+  const openModal = () => setModalOpen(true);
   const closeModal = () => {
     setEditingItem(null);
     setModalOpen(false);
   };
 
   const onSearchParamsChanged = useCallback(() => {
+    setSearchParams({
+      page: 0,
+    });
     setData([]);
     setLoadMore(true);
-  }, [setLoadMore]);
+  }, [setLoadMore, setSearchParams]);
 
   useEffect(() => {
     setLoadMore(false);
     onSearchParamsChanged();
   }, [onSearchParamsChanged, searchParams.project, setLoadMore]);
+
+  useEffect(() => {
+    setListData(data);
+  }, [data, setListData]);
 
   return (
     <DomainListContext.Provider
@@ -69,6 +77,7 @@ export default function DomainListProvider({children}: {children: ReactNode}) {
         data,
         openModal,
         closeModal,
+        init: onSearchParamsChanged,
       }}
     >
       {children}

@@ -1,7 +1,8 @@
-import {Button, DialogTitle} from '@mui/material';
+import {Button, CircularProgress, DialogTitle} from '@mui/material';
 import {DomainAPI} from '@src/api';
 import {ExcelUtils, excelDefaultHeader} from '@src/utils';
 import {styled} from 'styled-components';
+import {useState} from 'react';
 
 const StyledButtons = styled.div`
   display: flex;
@@ -12,6 +13,8 @@ const StyledButtons = styled.div`
 `;
 
 export default function ExcelImportModal() {
+  const [isUploading, setIsUploading] = useState(false);
+
   const onClickDownload = ({
     fileName = '도메인 입력 템플릿',
     data = [],
@@ -34,6 +37,7 @@ export default function ExcelImportModal() {
     };
 
     reader.onload = async (e) => {
+      setIsUploading(true);
       const data = await ExcelUtils.read(e.target.result as ArrayBuffer);
 
       const projectIndex = data[0].findIndex((e) => e === '프로젝트');
@@ -44,8 +48,8 @@ export default function ExcelImportModal() {
       const abbIndex = data[0].findIndex((e) => e === '약어');
       const desIndex = data[0].findIndex((e) => e === '설명');
 
-      data.slice(1).forEach((d) => {
-        DomainAPI.addDomain({
+      for (let d of data.slice(1)) {
+        await DomainAPI.addDomain({
           project: d[projectIndex],
           abbreviation: d[abbIndex],
           code: d[codeIndex],
@@ -54,7 +58,10 @@ export default function ExcelImportModal() {
           domain: d[domainIndex],
           lang: d[langIndex],
         });
-      });
+      }
+
+      alert('완료');
+      setIsUploading(false);
     };
 
     input.type = 'file';
@@ -65,13 +72,22 @@ export default function ExcelImportModal() {
   return (
     <>
       <DialogTitle id='alert-dialog-title'>{'xlsx 파일 추가'}</DialogTitle>
+
       <StyledButtons>
-        <Button onClick={() => onClickDownload()} variant='contained'>
-          템플릿 다운로드
-        </Button>
-        <Button onClick={onClickToUpload} variant='contained'>
-          파일 추가
-        </Button>
+        {isUploading ? (
+          <>
+            <CircularProgress />
+          </>
+        ) : (
+          <>
+            <Button onClick={() => onClickDownload()} variant='contained'>
+              템플릿 다운로드
+            </Button>
+            <Button onClick={onClickToUpload} variant='contained'>
+              파일 추가
+            </Button>
+          </>
+        )}
       </StyledButtons>
     </>
   );

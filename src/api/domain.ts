@@ -13,49 +13,37 @@ export default class DomainAPI {
     return res.data;
   }
 
-  static async addDomain(data: DomainAddProps) {
+  static async addDomain(data: DomainAddProps): Promise<ResponseData<DomainModel>> {
     const res = await axios(`${apiURL}/v1/admin/domain`, {
       method: 'POST',
       data: data,
     });
-    return res.data as {
-      code: number;
-      data: DomainModel | null;
-      msg: string;
-      success: boolean;
-    };
+    return res.data;
   }
 
-  static async modifyDomain(id: number, data: DomainAddProps) {
+  static async modifyDomain(
+    id: number | string,
+    data: DomainAddProps
+  ): Promise<ResponseData<DomainModel>> {
     const res = await axios(`${apiURL}/v1/admin/domain`, {
       method: 'PUT',
       data: {...data, id},
     });
-    return res.data as {
-      code: number;
-      data: DomainModel | null;
-      msg: string;
-      success: boolean;
-    };
-  }
-
-  static async getProjectNameList(): Promise<ResponseData<string[]>> {
-    const res = await axios(`${apiURL}/v1/admin/domain/project`).catch((e) => {
-      return e.response;
-    });
     return res.data;
   }
 
-  static async deleteDomain(id: number) {
-    const res = await axios(`${apiURL}/v1/admin/domain/${id}`, {
-      method: 'DELETE',
-    });
-    return {
-      success: res.data.success,
-      msg: res.data.msg,
-    } as {
-      success: boolean;
-      msg: string;
-    };
+  static async getProjectNameList(): Promise<ResponseData<string[]>> {
+    return (await axios(`${apiURL}/v1/admin/domain/project`).catch((e) => e.response)).data;
+  }
+
+  static async deleteDomain(id: number | string): Promise<{
+    success: boolean;
+    msg: string;
+  }> {
+    return (
+      await axios(`${apiURL}/v1/admin/domain/${id}`, {
+        method: 'DELETE',
+      })
+    ).data;
   }
 }

@@ -12,17 +12,20 @@ const StyledLoadingItem = styled.div`
 
 export default function LoadingItem({onIntersect}: {onIntersect: () => void}) {
   const loader = useRef(null);
+  const obs = useRef<IntersectionObserver>(null);
 
   useEffect(() => {
     if (loader.current === null) return;
-    const obs = new IntersectionObserver((c, b) => {
+    if (obs.current !== null) obs.current!.disconnect();
+
+    obs.current = new IntersectionObserver((c, b) => {
       if (c[0].isIntersecting) {
         onIntersect();
+        obs.current.disconnect();
       }
     });
-
-    obs.observe(loader.current);
-  }, [loader]);
+    obs.current.observe(loader.current);
+  }, [loader, onIntersect]);
 
   return (
     <StyledLoadingItem ref={loader}>

@@ -9,10 +9,14 @@ import ListView from '@src/features/ui/listview';
 import {useAuthContext} from './users.context';
 import AuthKeyListItem from './users.list-item';
 import {listHeaderModel} from './users.model';
+import {Delete} from '@mui/icons-material';
+import {useState} from 'react';
+import {DeleteSelectedItemsModal} from './modal';
 
 export default function AuthKeyList() {
   const {data, setData, setIsOpenModal} = useAuthContext();
   const {searchParams, nextPage, setLoadMore} = useListContext();
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
 
   const onIntersect = async () => {
     setLoadMore(false);
@@ -25,21 +29,33 @@ export default function AuthKeyList() {
     }
   };
 
+  const onClickToDeleteSelectedItems = () => setIsOpenDeleteModal(true);
+
   return (
     <>
       <AddUserModal />
       <ListView
+        headers={listHeaderModel}
+        onIntersect={onIntersect}
         action={
           <Button id='basic-button' aria-haspopup='true' onClick={() => setIsOpenModal(true)}>
             <GridAddIcon />
           </Button>
         }
-        headers={listHeaderModel}
-        onIntersect={onIntersect}
+        selectAction={
+          <Button id='basic-button' aria-haspopup='true' onClick={onClickToDeleteSelectedItems}>
+            <Delete />
+          </Button>
+        }
       >
         {data.map((e) => (
           <AuthKeyListItem data={e} key={e.seq} />
         ))}
+
+        <DeleteSelectedItemsModal
+          onClose={() => setIsOpenDeleteModal(false)}
+          isOpen={isOpenDeleteModal}
+        />
       </ListView>
     </>
   );

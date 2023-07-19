@@ -1,4 +1,6 @@
-export interface UserModel {
+import {ItemModel} from './item.model';
+
+export interface UserModel extends ItemModel {
   seq: number;
   name: string;
   email: string;
